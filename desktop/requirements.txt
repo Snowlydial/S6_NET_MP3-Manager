@@ -1,0 +1,4 @@
+pika          # RabbitMQ client
+mutagen       # MP3 metadata extraction
+requests      # HTTP calls to the C# API
+python-dotenv # .env file support
