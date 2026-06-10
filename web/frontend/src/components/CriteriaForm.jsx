@@ -2,32 +2,89 @@ import { useState, useEffect } from 'react'
 import { getFilters } from '../api/api'
 import './CriteriaForm.css'
 
+function FilterField({ label, options, included, excluded, onInclude, onExclude, onRemoveIncluded, onRemoveExcluded }) {
+  const [selected, setSelected] = useState('')
+
+  const available = options.filter(o => !included.includes(o) && !excluded.includes(o))
+
+  return (
+    <div className="field">
+      <label>{label}</label>
+      <div className="filter-row">
+        <select value={selected} onChange={e => setSelected(e.target.value)} disabled={available.length === 0}>
+          <option value="">— select —</option>
+          {available.map(o => <option key={o} value={o}>{o}</option>)}
+        </select>
+        <button type="button" className="btn-include" disabled={!selected}
+          onClick={() => { onInclude(selected); setSelected('') }}>
+          + Include
+        </button>
+        <button type="button" className="btn-exclude" disabled={!selected}
+          onClick={() => { onExclude(selected); setSelected('') }}>
+          − Exclude
+        </button>
+      </div>
+
+      {included.length > 0 && (
+        <div className="tag-group">
+          <span className="tag-group-label">Include</span>
+          <div className="tags">
+            {included.map(v => (
+              <span key={v} className="tag tag-include">
+                {v}
+                <button type="button" onClick={() => onRemoveIncluded(v)}>×</button>
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {excluded.length > 0 && (
+        <div className="tag-group">
+          <span className="tag-group-label">Exclude</span>
+          <div className="tags">
+            {excluded.map(v => (
+              <span key={v} className="tag tag-exclude">
+                {v}
+                <button type="button" onClick={() => onRemoveExcluded(v)}>×</button>
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {options.length === 0 && <p className="empty-filter">No {label.toLowerCase()} in library</p>}
+    </div>
+  )
+}
+
 export default function CriteriaForm({ onGenerate, loading }) {
   const [duration, setDuration] = useState('')
   const [artists, setArtists] = useState([])
   const [genres, setGenres] = useState([])
-  const [selectedArtists, setSelectedArtists] = useState([])
-  const [selectedGenres, setSelectedGenres] = useState([])
+
+  const [includedArtists, setIncludedArtists] = useState([])
+  const [excludedArtists, setExcludedArtists] = useState([])
+  const [includedGenres, setIncludedGenres] = useState([])
+  const [excludedGenres, setExcludedGenres] = useState([])
 
   useEffect(() => {
-    getFilters()
-      .then(data => {
-        setArtists(data.artists)
-        setGenres(data.genres)
-      })
-      .catch(() => {})
+    getFilters().then(data => {
+      setArtists(data.artists)
+      setGenres(data.genres)
+    }).catch(() => {})
   }, [])
-
-  function toggleItem(value, selected, setSelected) {
-    setSelected(selected.includes(value)
-      ? selected.filter(v => v !== value)
-      : [...selected, value])
-  }
 
   function handleSubmit(e) {
     e.preventDefault()
     if (!duration || parseInt(duration) <= 0) return
-    onGenerate({ durationMinutes: parseInt(duration), artists: selectedArtists, genres: selectedGenres })
+    onGenerate({
+      durationMinutes: parseInt(duration),
+      artists: includedArtists,
+      excludedArtists,
+      genres: includedGenres,
+      excludedGenres,
+    })
   }
 
   return (
@@ -39,48 +96,31 @@ export default function CriteriaForm({ onGenerate, loading }) {
           min="1"
           value={duration}
           onChange={e => setDuration(e.target.value)}
-          placeholder="e.g. 12"
           required
         />
       </div>
 
-      <div className="field">
-        <label>Artists {selectedArtists.length > 0 && <span className="count">({selectedArtists.length} selected)</span>}</label>
-        {artists.length === 0
-          ? <p className="empty-filter">No artists in library</p>
-          : <div className="checkbox-list">
-              {artists.map(a => (
-                <label key={a} className="checkbox-item">
-                  <input
-                    type="checkbox"
-                    checked={selectedArtists.includes(a)}
-                    onChange={() => toggleItem(a, selectedArtists, setSelectedArtists)}
-                  />
-                  {a}
-                </label>
-              ))}
-            </div>
-        }
-      </div>
+      <FilterField
+        label="Artists"
+        options={artists}
+        included={includedArtists}
+        excluded={excludedArtists}
+        onInclude={v => setIncludedArtists([...includedArtists, v])}
+        onExclude={v => setExcludedArtists([...excludedArtists, v])}
+        onRemoveIncluded={v => setIncludedArtists(includedArtists.filter(a => a !== v))}
+        onRemoveExcluded={v => setExcludedArtists(excludedArtists.filter(a => a !== v))}
+      />
 
-      <div className="field">
-        <label>Genres {selectedGenres.length > 0 && <span className="count">({selectedGenres.length} selected)</span>}</label>
-        {genres.length === 0
-          ? <p className="empty-filter">No genres in library</p>
-          : <div className="checkbox-list">
-              {genres.map(g => (
-                <label key={g} className="checkbox-item">
-                  <input
-                    type="checkbox"
-                    checked={selectedGenres.includes(g)}
-                    onChange={() => toggleItem(g, selectedGenres, setSelectedGenres)}
-                  />
-                  {g}
-                </label>
-              ))}
-            </div>
-        }
-      </div>
+      <FilterField
+        label="Genres"
+        options={genres}
+        included={includedGenres}
+        excluded={excludedGenres}
+        onInclude={v => setIncludedGenres([...includedGenres, v])}
+        onExclude={v => setExcludedGenres([...excludedGenres, v])}
+        onRemoveIncluded={v => setIncludedGenres(includedGenres.filter(g => g !== v))}
+        onRemoveExcluded={v => setExcludedGenres(excludedGenres.filter(g => g !== v))}
+      />
 
       <button type="submit" className="btn-generate" disabled={loading}>
         {loading ? 'Generating...' : 'Generate Playlist'}

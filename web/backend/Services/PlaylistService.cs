@@ -21,16 +21,26 @@ public class PlaylistService
         bool hasArtistFilter = request.Artists.Count > 0;
         bool hasGenreFilter = request.Genres.Count > 0;
 
-        var artists = request.Artists.Select(a => a.ToLower()).ToHashSet();
-        var genres = request.Genres.Select(g => g.ToLower()).ToHashSet();
+        var artists         = request.Artists.Select(a => a.ToLower()).ToHashSet();
+        var excludedArtists = request.ExcludedArtists.Select(a => a.ToLower()).ToHashSet();
+        var genres          = request.Genres.Select(g => g.ToLower()).ToHashSet();
+        var excludedGenres  = request.ExcludedGenres.Select(g => g.ToLower()).ToHashSet();
 
         var allSongs = await _db.Songs.ToListAsync();
         var shuffled = allSongs.OrderBy(_ => Guid.NewGuid()).ToList();
 
-        var matching = shuffled.Where(s =>
+        // Remove excluded songs from the entire pool first
+        var pool = shuffled.Where(s =>
+        {
+            bool artistExcluded = s.Artist != null && excludedArtists.Contains(s.Artist.ToLower());
+            bool genreExcluded  = s.Genre  != null && excludedGenres.Contains(s.Genre.ToLower());
+            return !artistExcluded && !genreExcluded;
+        }).ToList();
+
+        var matching = pool.Where(s =>
         {
             bool artistOk = !hasArtistFilter || (s.Artist != null && artists.Contains(s.Artist.ToLower()));
-            bool genreOk = !hasGenreFilter || (s.Genre != null && genres.Contains(s.Genre.ToLower()));
+            bool genreOk  = !hasGenreFilter  || (s.Genre  != null && genres.Contains(s.Genre.ToLower()));
             return artistOk && genreOk;
         }).ToList();
 
@@ -47,11 +57,11 @@ public class PlaylistService
             }
         }
 
-        // If still under lower bound, fill with any remaining songs
+        // If still under lower bound, fill with remaining non-excluded songs
         if (total < lower)
         {
-            var usedIds = playlist.Select(s => s.Id).ToHashSet();
-            var remaining = shuffled.Where(s => !usedIds.Contains(s.Id)).ToList();
+            var usedIds   = playlist.Select(s => s.Id).ToHashSet();
+            var remaining = pool.Where(s => !usedIds.Contains(s.Id)).ToList();
 
             foreach (var song in remaining)
             {
