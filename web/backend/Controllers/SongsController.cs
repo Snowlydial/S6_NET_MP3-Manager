@@ -66,6 +66,26 @@ public class SongsController : ControllerBase
         return Ok(songs);
     }
 
+    [HttpGet("filters")]
+    public async Task<IActionResult> GetFilters()
+    {
+        var artists = await _db.Songs
+            .Where(s => s.Artist != null)
+            .Select(s => s.Artist!)
+            .Distinct()
+            .OrderBy(a => a)
+            .ToListAsync();
+
+        var genres = await _db.Songs
+            .Where(s => s.Genre != null)
+            .Select(s => s.Genre!)
+            .Distinct()
+            .OrderBy(g => g)
+            .ToListAsync();
+
+        return Ok(new { artists, genres });
+    }
+
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {

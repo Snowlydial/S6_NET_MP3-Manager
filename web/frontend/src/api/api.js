@@ -20,6 +20,12 @@ export async function downloadPlaylist(songIds) {
   return res.blob()
 }
 
+export async function getFilters() {
+  const res = await fetch(`${BASE}/songs/filters`)
+  if (!res.ok) throw new Error(await res.text())
+  return res.json()
+}
+
 export function streamUrl(songId) {
   return `${BASE}/songs/${songId}/stream`
 }

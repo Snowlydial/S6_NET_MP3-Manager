@@ -33,63 +33,42 @@
   border-color: #888;
 }
 
-.tag-input {
+.checkbox-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-}
-
-.tags {
-  display: flex;
-  flex-wrap: wrap;
   gap: 6px;
-  min-height: 10px;
-}
-
-.tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  background: #e8e2da;
-  border-radius: 3px;
-  padding: 3px 8px;
-  font-size: 13px;
-}
-
-.tag button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #888;
-  font-size: 15px;
-  line-height: 1;
-  padding: 0;
-}
-
-.tag button:hover {
-  color: #333;
-}
-
-.tag-row {
-  display: flex;
-  gap: 8px;
-}
-
-.tag-row input {
-  flex: 1;
-}
-
-.tag-row button {
-  padding: 8px 14px;
-  background: #e8e2da;
+  max-height: 160px;
+  overflow-y: auto;
   border: 1px solid #d4cfc9;
   border-radius: 4px;
-  font-size: 13px;
+  padding: 8px 10px;
+  background: #fffef9;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
   cursor: pointer;
 }
 
-.tag-row button:hover {
-  background: #ddd7cf;
+.checkbox-item input[type="checkbox"] {
+  accent-color: #333;
+  cursor: pointer;
+}
+
+.count {
+  font-weight: 400;
+  color: #888;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.empty-filter {
+  font-size: 13px;
+  color: #aaa;
+  font-style: italic;
 }
 
 .btn-generate {
