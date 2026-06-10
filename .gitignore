@@ -31,3 +31,4 @@ web/backend/.vs/
 # React / Node
 web/frontend/node_modules/
 web/frontend/dist/
+/desktop/musicTest
