@@ -1,9 +1,7 @@
+import PlaylistPage from './pages/PlaylistPage'
+
 function App() {
-  return (
-    <div>
-      <h1>MP3 Manager</h1>
-    </div>
-  )
+  return <PlaylistPage />
 }
 
 export default App

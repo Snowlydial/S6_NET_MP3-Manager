@@ -1,0 +1,82 @@
+.player {
+  background: #fffef9;
+  border: 1px solid #d4cfc9;
+  border-radius: 6px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.player-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: center;
+}
+
+.player-title {
+  font-weight: 600;
+  font-size: 15px;
+  color: #222;
+}
+
+.player-artist {
+  font-size: 13px;
+  color: #777;
+}
+
+.player-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+}
+
+.player-controls button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #444;
+  padding: 4px 8px;
+}
+
+.player-controls button:hover:not(:disabled) {
+  color: #111;
+}
+
+.player-controls button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.play-btn {
+  font-size: 22px !important;
+  background: #333 !important;
+  color: #fff !important;
+  border-radius: 50% !important;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.play-btn:hover {
+  background: #111 !important;
+}
+
+.player-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: #888;
+}
+
+.player-progress input[type="range"] {
+  flex: 1;
+  accent-color: #333;
+  cursor: pointer;
+}
