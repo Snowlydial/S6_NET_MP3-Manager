@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from mutagen.mp3 import MP3
 from mutagen.id3 import ID3, ID3NoHeaderError
 
-from shared.logger import initLogger
+from shared.logger import initLogger, logStep
 from shared.message_queue import consume, publish
 
 load_dotenv()
@@ -35,18 +35,28 @@ def extractMetadata(filePath: str) -> dict:
         logger.warning(f"No ID3 tags found in '{filename}', all metadata set to null")
         title = artist = genre = language = year = None
 
-    return {
+    metadata = {
         "file_path": filePath,
         "title":     title or filename,
-        "artist":   artist,
-        "genre":    genre,
-        "language": language,
-        "duration": duration,
-        "year":     year,
+        "artist":    artist,
+        "genre":     genre,
+        "language":  language,
+        "duration":  duration,
+        "year":      year,
     }
+
+    logger.info(f"  title:    {metadata['title']}")
+    logger.info(f"  artist:   {metadata['artist']}")
+    logger.info(f"  genre:    {metadata['genre']}")
+    logger.info(f"  language: {metadata['language']}")
+    logger.info(f"  duration: {metadata['duration']}s")
+    logger.info(f"  year:     {metadata['year']}")
+
+    return metadata
 
 
 def processMessage(message: str):
+    logStep(logger, 2, "METADATA")
     logger.info("Message received from P1")
 
     try:

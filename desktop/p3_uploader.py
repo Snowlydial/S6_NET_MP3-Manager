@@ -3,7 +3,7 @@ import json
 import time
 import requests
 from dotenv import load_dotenv
-from shared.logger import initLogger
+from shared.logger import initLogger, logStep
 from shared.message_queue import consume
 
 load_dotenv()
@@ -75,6 +75,7 @@ def processSong(song: dict):
 
 
 def processMessage(message: str):
+    logStep(logger, 3, "UPLOAD")
     logger.info("Message received from P2")
 
     try:

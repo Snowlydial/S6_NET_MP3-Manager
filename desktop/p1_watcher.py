@@ -3,7 +3,7 @@ import json
 import time
 from dotenv import load_dotenv
 
-from shared.logger import initLogger
+from shared.logger import initLogger, logStep
 from shared.message_queue import publish
 
 load_dotenv()
@@ -18,6 +18,7 @@ def listTheMP3():
     return [os.path.join(musicDir, f) for f in files if f.lower().endswith(".mp3")]
 
 def pipeline():
+    logStep(logger, 1, "WATCHER")
     mp3List = listTheMP3()
     
     if len(mp3List) > 0:
