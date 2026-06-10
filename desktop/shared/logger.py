@@ -1,4 +1,5 @@
 import os
+import sys
 import logging
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -18,6 +19,7 @@ def initLogger(name: str):
         file_handler.setFormatter(formatter)
 
         console_handler = logging.StreamHandler()
+        console_handler.stream = open(sys.stdout.fileno(), mode='w', encoding='utf-8', buffering=1)
         console_handler.setFormatter(formatter)
 
         logger.addHandler(file_handler)
