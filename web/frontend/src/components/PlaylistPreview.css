@@ -89,6 +89,21 @@
   flex-shrink: 0;
 }
 
+.btn-replace {
+  background: none;
+  border: none;
+  font-size: 15px;
+  color: #bbb;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0 2px;
+  flex-shrink: 0;
+}
+
+.btn-replace:hover {
+  color: #555;
+}
+
 .btn-remove {
   background: none;
   border: none;
@@ -102,6 +117,23 @@
 
 .btn-remove:hover {
   color: #e55;
+}
+
+.btn-add-song {
+  padding: 8px 14px;
+  background: none;
+  border: 1px dashed #c0bbb5;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #888;
+  cursor: pointer;
+  text-align: left;
+}
+
+.btn-add-song:hover {
+  background: #f5f0eb;
+  color: #444;
+  border-color: #aaa;
 }
 
 .btn-download {

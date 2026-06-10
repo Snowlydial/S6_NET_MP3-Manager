@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import AudioPlayer from './AudioPlayer'
+import SongPicker from './SongPicker'
 import { downloadPlaylist } from '../api/api'
 import './PlaylistPreview.css'
 
@@ -16,11 +17,24 @@ function totalDuration(songs) {
 export default function PlaylistPreview({ playlist, onPlaylistChange }) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [downloading, setDownloading] = useState(false)
+  const [picker, setPicker] = useState(null) // { mode: 'replace', index } | { mode: 'add' } | null
+
+  const playlistIds = playlist.map(s => s.id)
 
   function removeSong(id) {
     const updated = playlist.filter(s => s.id !== id)
     onPlaylistChange(updated)
     if (currentIndex >= updated.length) setCurrentIndex(Math.max(0, updated.length - 1))
+  }
+
+  function handlePick(song) {
+    if (picker.mode === 'replace') {
+      const updated = [...playlist]
+      updated[picker.index] = song
+      onPlaylistChange(updated)
+    } else {
+      onPlaylistChange([...playlist, song])
+    }
   }
 
   async function handleDownload() {
@@ -46,6 +60,14 @@ export default function PlaylistPreview({ playlist, onPlaylistChange }) {
 
   return (
     <div className="playlist-preview">
+      {picker && (
+        <SongPicker
+          excludeIds={playlistIds}
+          onPick={handlePick}
+          onClose={() => setPicker(null)}
+        />
+      )}
+
       <div className="playlist-header">
         <h2>Playlist</h2>
         <span className="playlist-meta">
@@ -69,7 +91,15 @@ export default function PlaylistPreview({ playlist, onPlaylistChange }) {
             </div>
             <span className="song-duration">{formatDuration(song.duration)}</span>
             <button
+              className="btn-replace"
+              title="Replace"
+              onClick={e => { e.stopPropagation(); setPicker({ mode: 'replace', index: i }) }}
+            >
+              ⇄
+            </button>
+            <button
               className="btn-remove"
+              title="Remove"
               onClick={e => { e.stopPropagation(); removeSong(song.id) }}
             >
               ×
@@ -77,6 +107,10 @@ export default function PlaylistPreview({ playlist, onPlaylistChange }) {
           </li>
         ))}
       </ul>
+
+      <button className="btn-add-song" onClick={() => setPicker({ mode: 'add' })}>
+        + Add song
+      </button>
 
       <AudioPlayer
         playlist={playlist}
