@@ -28,6 +28,10 @@ public class SongsController : ControllerBase
         var fileName = Path.GetFileName(file.FileName);
         var filePath = Path.Combine(uploadsPath, fileName);
 
+        var existing = await _db.Songs.FirstOrDefaultAsync(s => s.FilePath == Path.GetFullPath(filePath));
+        if (existing != null)
+            return Ok(existing);
+
         using (var stream = System.IO.File.Create(filePath))
             await file.CopyToAsync(stream);
 
