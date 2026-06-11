@@ -18,3 +18,4 @@ desktop/music/
 .DS_Store
 Thumbs.db
 /_notes
+desktop/test.py
