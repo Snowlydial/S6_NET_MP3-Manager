@@ -1,0 +1,164 @@
+.playlist-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.playlist-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.playlist-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #222;
+}
+
+.playlist-meta {
+  font-size: 13px;
+  color: #888;
+}
+
+.song-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #d4cfc9;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.song-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-bottom: 1px solid #ede8e2;
+  cursor: pointer;
+  background: #fffef9;
+  transition: background 0.1s;
+}
+
+.song-row:last-child {
+  border-bottom: none;
+}
+
+.song-row:hover {
+  background: #f5f0eb;
+}
+
+.song-row.active {
+  background: #ede8e2;
+}
+
+.song-index {
+  font-size: 12px;
+  color: #aaa;
+  width: 18px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.song-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.song-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #222;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.song-sub {
+  font-size: 12px;
+  color: #999;
+}
+
+.song-duration {
+  font-size: 12px;
+  color: #aaa;
+  flex-shrink: 0;
+}
+
+.btn-replace {
+  background: none;
+  border: none;
+  font-size: 15px;
+  color: #bbb;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0 2px;
+  flex-shrink: 0;
+}
+
+.btn-replace:hover {
+  color: #555;
+}
+
+.btn-remove {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #ccc;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0 2px;
+  flex-shrink: 0;
+}
+
+.btn-remove:hover {
+  color: #e55;
+}
+
+.btn-add-song {
+  padding: 8px 14px;
+  background: none;
+  border: 1px dashed #c0bbb5;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #888;
+  cursor: pointer;
+  text-align: left;
+}
+
+.btn-add-song:hover {
+  background: #f5f0eb;
+  color: #444;
+  border-color: #aaa;
+}
+
+.btn-download {
+  padding: 10px;
+  background: #fffef9;
+  border: 1px solid #d4cfc9;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  color: #333;
+  font-weight: 500;
+}
+
+.btn-download:hover:not(:disabled) {
+  background: #ede8e2;
+}
+
+.btn-download:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.empty-playlist {
+  color: #999;
+  font-size: 14px;
+  text-align: center;
+  padding: 20px 0;
+}

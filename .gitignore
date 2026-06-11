@@ -17,5 +17,18 @@ desktop/music/
 # OS
 .DS_Store
 Thumbs.db
-/_notes
+
+# Notes
+_notes/
 desktop/test.py
+
+# C# / .NET
+web/backend/bin/
+web/backend/obj/
+web/backend/*.user
+web/backend/.vs/
+
+# React / Node
+web/frontend/node_modules/
+web/frontend/dist/
+/desktop/musicTest

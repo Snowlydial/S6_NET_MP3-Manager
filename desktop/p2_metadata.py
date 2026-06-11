@@ -65,7 +65,18 @@ def processMessage(message: str):
         logger.error(f"Failed to deserialize P1 message: {e}")
         return
 
-    enrichedList = [extractMetadata(f) for f in filenameList]
+    existing = []
+    for f in filenameList:
+        if os.path.exists(f):
+            existing.append(f)
+        else:
+            logger.warning(f"File not found, skipping: {os.path.basename(f)}")
+
+    if not existing:
+        logger.info("No valid files to process, skipping")
+        return
+
+    enrichedList = [extractMetadata(f) for f in existing]
     logger.info(f"Metadata extracted for {len(enrichedList)} file(s), publishing to queue")
 
     try:
