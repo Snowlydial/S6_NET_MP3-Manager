@@ -24,7 +24,7 @@ public class PlaylistsController : ControllerBase
         if (request.DurationMinutes <= 0)
             return BadRequest("DurationMinutes must be greater than 0");
 
-        var playlist = await _playlistService.GenerateAsync(request);
+        List<Song> playlist = await _playlistService.GenerateAsync(request);
         return Ok(playlist);
     }
 
@@ -34,7 +34,7 @@ public class PlaylistsController : ControllerBase
         if (request.SongIds.Count == 0)
             return BadRequest("No songs provided");
 
-        var stream = await _playlistService.BuildZip(request.SongIds);
+        MemoryStream stream = await _playlistService.BuildZip(request.SongIds);
         return File(stream, "application/zip", "playlist.zip");
     }
 }

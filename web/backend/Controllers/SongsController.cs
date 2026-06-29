@@ -24,32 +24,32 @@ public class SongsController : ControllerBase
         [FromForm] string? artist, [FromForm] string? albumArtist, [FromForm] string? genre, 
         [FromForm] string? language, [FromForm] int duration, [FromForm] string? year)
     {
-        var song = await _songService.SaveSong(file, title, artist, albumArtist, genre, language, duration, year);
+        Song song = await _songService.SaveSong(file, title, artist, albumArtist, genre, language, duration, year);
         return Ok(song);
     }
 
     [HttpGet("{id}/stream")]
     public IActionResult Stream(int id)
     {
-        var song = _db.Songs.Find(id);
+        Song? song = _db.Songs.Find(id);
         if (song == null) return NotFound();
         if (!System.IO.File.Exists(song.FilePath)) return NotFound("File not found on disk");
 
-        var stream = System.IO.File.OpenRead(song.FilePath);
+        FileStream stream = System.IO.File.OpenRead(song.FilePath);
         return File(stream, "audio/mpeg", enableRangeProcessing: true);
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var songs = await _db.Songs.OrderBy(s => s.Title).ToListAsync();
+        List<Song> songs = await _db.Songs.OrderBy(s => s.Title).ToListAsync();
         return Ok(songs);
     }
 
     [HttpGet("filters")]
     public async Task<IActionResult> GetFilters()
     {
-        var artists = await _db.Songs
+        List<string> artists = await _db.Songs
             .Where(s => s.Artist != null)
             .Select(s => s.Artist!)
             .Union(
@@ -61,7 +61,7 @@ public class SongsController : ControllerBase
             .OrderBy(a => a)
             .ToListAsync();
 
-        var genres = await _db.Songs
+        List<string> genres = await _db.Songs
             .Where(s => s.Genre != null)
             .Select(s => s.Genre!)
             .Distinct()
@@ -74,7 +74,7 @@ public class SongsController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var song = await _db.Songs.FindAsync(id);
+        Song? song = await _db.Songs.FindAsync(id);
         if (song == null) return NotFound();
 
         if (System.IO.File.Exists(song.FilePath))

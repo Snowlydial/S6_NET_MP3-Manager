@@ -22,30 +22,30 @@ public class PlaylistService
         bool hasArtistFilter = request.Artists.Count > 0;
         bool hasGenreFilter = request.Genres.Count > 0;
 
-        var artists         = request.Artists.Select(a => a.ToLower()).ToHashSet();
-        var excludedArtists = request.ExcludedArtists.Select(a => a.ToLower()).ToHashSet();
-        var genres          = request.Genres.Select(g => g.ToLower()).ToHashSet();
-        var excludedGenres  = request.ExcludedGenres.Select(g => g.ToLower()).ToHashSet();
+        HashSet<string> artists         = request.Artists.Select(a => a.ToLower()).ToHashSet();
+        HashSet<string> excludedArtists = request.ExcludedArtists.Select(a => a.ToLower()).ToHashSet();
+        HashSet<string> genres          = request.Genres.Select(g => g.ToLower()).ToHashSet();
+        HashSet<string> excludedGenres  = request.ExcludedGenres.Select(g => g.ToLower()).ToHashSet();
 
-        var allSongs = await _db.Songs.ToListAsync();
-        var shuffled = allSongs.OrderBy(_ => Guid.NewGuid()).ToList();
+        List<Song> allSongs = await _db.Songs.ToListAsync();
+        List<Song> shuffled = allSongs.OrderBy(_ => Guid.NewGuid()).ToList();
 
         // Remove excluded songs from the entire pool first
-        var pool = shuffled.Where(s =>
+        List<Song> pool = shuffled.Where(s =>
         {
             bool artistExcluded = s.Artist != null && excludedArtists.Contains(s.Artist.ToLower());
             bool genreExcluded  = s.Genre  != null && excludedGenres.Contains(s.Genre.ToLower());
             return !artistExcluded && !genreExcluded;
         }).ToList();
 
-        var matching = pool.Where(s =>
+        List<Song> matching = pool.Where(s =>
         {
             bool artistOk = !hasArtistFilter || (s.Artist != null && artists.Contains(s.Artist.ToLower()));
             bool genreOk  = !hasGenreFilter  || (s.Genre  != null && genres.Contains(s.Genre.ToLower()));
             return artistOk && genreOk;
         }).ToList();
 
-        var playlist = new List<Song>();
+        List<Song> playlist = new List<Song>();
         int total = 0;
 
         // Fill with matching songs first
@@ -61,8 +61,8 @@ public class PlaylistService
         // If still under lower bound, fill with remaining non-excluded songs
         if (total < lower)
         {
-            var usedIds   = playlist.Select(s => s.Id).ToHashSet();
-            var remaining = pool.Where(s => !usedIds.Contains(s.Id)).ToList();
+            HashSet<int> usedIds   = playlist.Select(s => s.Id).ToHashSet();
+            List<Song> remaining = pool.Where(s => !usedIds.Contains(s.Id)).ToList();
 
             foreach (var song in remaining)
             {
@@ -79,19 +79,19 @@ public class PlaylistService
 
     public async Task<MemoryStream> BuildZip(List<int> songIds)
     {
-        var songs = _db.Songs
+        List<Song> songs = _db.Songs
             .Where(s => songIds.Contains(s.Id))
             .ToList();
 
-        var memoryStream = new MemoryStream();
-        using (var zip = new ZipArchive(memoryStream, ZipArchiveMode.Create, leaveOpen: true))
+        MemoryStream memoryStream = new MemoryStream();
+        using (ZipArchive zip = new ZipArchive(memoryStream, ZipArchiveMode.Create, leaveOpen: true))
         {
-            foreach (var song in songs)
+            foreach (Song song in songs)
             {
                 if (!System.IO.File.Exists(song.FilePath)) continue;
-                var entry = zip.CreateEntry(Path.GetFileName(song.FilePath));
-                using var entryStream = entry.Open();
-                using var fileStream = System.IO.File.OpenRead(song.FilePath);
+                ZipArchiveEntry entry = zip.CreateEntry(Path.GetFileName(song.FilePath));
+                using Stream entryStream = entry.Open();
+                using FileStream fileStream = System.IO.File.OpenRead(song.FilePath);
                 await fileStream.CopyToAsync(entryStream);
             }
         }
