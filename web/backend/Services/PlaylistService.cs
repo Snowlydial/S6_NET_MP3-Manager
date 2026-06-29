@@ -1,3 +1,4 @@
+using System.IO.Compression;
 using Microsoft.EntityFrameworkCore;
 using Mp3Manager.Api.Data;
 using Mp3Manager.Api.Models;
@@ -74,5 +75,28 @@ public class PlaylistService
         }
 
         return playlist;
+    }
+
+    public async Task<MemoryStream> BuildZip(List<int> songIds)
+    {
+        var songs = _db.Songs
+            .Where(s => songIds.Contains(s.Id))
+            .ToList();
+
+        var memoryStream = new MemoryStream();
+        using (var zip = new ZipArchive(memoryStream, ZipArchiveMode.Create, leaveOpen: true))
+        {
+            foreach (var song in songs)
+            {
+                if (!System.IO.File.Exists(song.FilePath)) continue;
+                var entry = zip.CreateEntry(Path.GetFileName(song.FilePath));
+                using var entryStream = entry.Open();
+                using var fileStream = System.IO.File.OpenRead(song.FilePath);
+                await fileStream.CopyToAsync(entryStream);
+            }
+        }
+
+        memoryStream.Position = 0;
+        return memoryStream;
     }
 }

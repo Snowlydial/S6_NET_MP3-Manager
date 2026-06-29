@@ -1,4 +1,3 @@
-using System.IO.Compression;
 using Microsoft.AspNetCore.Mvc;
 using Mp3Manager.Api.Data;
 using Mp3Manager.Api.Models;
@@ -35,26 +34,7 @@ public class PlaylistsController : ControllerBase
         if (request.SongIds.Count == 0)
             return BadRequest("No songs provided");
 
-        var songs = _db.Songs
-            .Where(s => request.SongIds.Contains(s.Id))
-            .ToList();
-
-        var memoryStream = new MemoryStream();
-        using (var zip = new ZipArchive(memoryStream, ZipArchiveMode.Create, leaveOpen: true))
-        {
-            foreach (var song in songs)
-            {
-                if (!System.IO.File.Exists(song.FilePath)) continue;
-
-                var entryName = Path.GetFileName(song.FilePath);
-                var entry = zip.CreateEntry(entryName);
-                using var entryStream = entry.Open();
-                using var fileStream = System.IO.File.OpenRead(song.FilePath);
-                await fileStream.CopyToAsync(entryStream);
-            }
-        }
-
-        memoryStream.Position = 0;
-        return File(memoryStream, "application/zip", "playlist.zip");
+        var stream = await _playlistService.BuildZip(request.SongIds);
+        return File(stream, "application/zip", "playlist.zip");
     }
 }

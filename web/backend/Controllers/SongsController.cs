@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Mp3Manager.Api.Data;
 using Mp3Manager.Api.Models;
+using Mp3Manager.Api.Services;
 
 namespace Mp3Manager.Api.Controllers;
 
@@ -10,46 +11,20 @@ namespace Mp3Manager.Api.Controllers;
 public class SongsController : ControllerBase
 {
     private readonly AppDbContext _db;
-    private readonly IConfiguration _config;
+    private readonly SongService _songService;
 
-    public SongsController(AppDbContext db, IConfiguration config)
+    public SongsController(AppDbContext db, SongService songService)
     {
         _db = db;
-        _config = config;
+        _songService = songService;
     }
 
     [HttpPost("upload")]
-    public async Task<IActionResult> Upload(IFormFile file, [FromForm] string title, [FromForm] string? artist, [FromForm] string? albumArtist,
-        [FromForm] string? genre, [FromForm] string? language, [FromForm] int duration, [FromForm] string? year)
+    public async Task<IActionResult> Upload(IFormFile file, [FromForm] string title, 
+        [FromForm] string? artist, [FromForm] string? albumArtist, [FromForm] string? genre, 
+        [FromForm] string? language, [FromForm] int duration, [FromForm] string? year)
     {
-        var uploadsPath = Path.Combine(AppContext.BaseDirectory, _config["UploadsPath"] ?? "uploads");
-        Directory.CreateDirectory(uploadsPath);
-
-        var fileName = Path.GetFileName(file.FileName);
-        var filePath = Path.Combine(uploadsPath, fileName);
-
-        var existing = await _db.Songs.FirstOrDefaultAsync(s => s.FilePath == Path.GetFullPath(filePath));
-        if (existing != null)
-            return Ok(existing);
-
-        using (var stream = System.IO.File.Create(filePath))
-            await file.CopyToAsync(stream);
-
-        var song = new Song
-        {
-            Title = title,
-            Artist = string.IsNullOrWhiteSpace(artist) ? null : artist,
-            AlbumArtist = string.IsNullOrWhiteSpace(albumArtist) ? null : albumArtist,
-            Genre = string.IsNullOrWhiteSpace(genre) ? null : genre,
-            Language = string.IsNullOrWhiteSpace(language) ? null : language,
-            Duration = duration,
-            Year = string.IsNullOrWhiteSpace(year) ? null : year,
-            FilePath = Path.GetFullPath(filePath),
-        };
-
-        _db.Songs.Add(song);
-        await _db.SaveChangesAsync();
-
+        var song = await _songService.SaveSong(file, title, artist, albumArtist, genre, language, duration, year);
         return Ok(song);
     }
 
