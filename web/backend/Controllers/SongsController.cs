@@ -22,7 +22,7 @@ public class SongsController : ControllerBase
     public async Task<IActionResult> Upload(IFormFile file, [FromForm] string title, [FromForm] string? artist,
         [FromForm] string? genre, [FromForm] string? language, [FromForm] int duration, [FromForm] string? year)
     {
-        var uploadsPath = _config["UploadsPath"] ?? "uploads";
+        var uploadsPath = Path.Combine(AppContext.BaseDirectory, _config["UploadsPath"] ?? "uploads");
         Directory.CreateDirectory(uploadsPath);
 
         var fileName = Path.GetFileName(file.FileName);
