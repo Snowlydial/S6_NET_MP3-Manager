@@ -28,6 +28,7 @@ def extractMetadata(filePath: str) -> dict:
         tags = ID3(filePath)
         title    = str(tags["TIT2"]) if "TIT2" in tags else None
         artist   = str(tags["TPE1"]) if "TPE1" in tags else None
+        albumArtist = str(tags["TPE2"]) if "TPE2" in tags else None
         genre    = str(tags["TCON"]) if "TCON" in tags else None
         language = str(tags["TLAN"]) if "TLAN" in tags else None
         year     = str(tags["TDRC"]) if "TDRC" in tags else None
@@ -39,6 +40,7 @@ def extractMetadata(filePath: str) -> dict:
         "file_path": filePath,
         "title":     title or filename,
         "artist":    artist,
+        "albumArtist": albumArtist,
         "genre":     genre,
         "language":  language,
         "duration":  duration,
@@ -47,6 +49,7 @@ def extractMetadata(filePath: str) -> dict:
 
     logger.info(f"  title:    {metadata['title']}")
     logger.info(f"  artist:   {metadata['artist']}")
+    logger.info(f"  album artist:   {metadata['albumArtist']}")
     logger.info(f"  genre:    {metadata['genre']}")
     logger.info(f"  language: {metadata['language']}")
     logger.info(f"  duration: {metadata['duration']}s")

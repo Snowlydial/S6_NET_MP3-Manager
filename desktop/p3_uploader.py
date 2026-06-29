@@ -32,6 +32,7 @@ def uploadSong(song: dict) -> bool:
                     data={
                         "title":    song.get("title") or "",
                         "artist":   song.get("artist") or "",
+                        "albumArtist": song.get("albumArtist") or "",
                         "genre":    song.get("genre") or "",
                         "language": song.get("language") or "",
                         "duration": song.get("duration") or 0,

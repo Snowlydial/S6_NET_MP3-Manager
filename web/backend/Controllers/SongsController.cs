@@ -19,7 +19,7 @@ public class SongsController : ControllerBase
     }
 
     [HttpPost("upload")]
-    public async Task<IActionResult> Upload(IFormFile file, [FromForm] string title, [FromForm] string? artist,
+    public async Task<IActionResult> Upload(IFormFile file, [FromForm] string title, [FromForm] string? artist, [FromForm] string? albumArtist,
         [FromForm] string? genre, [FromForm] string? language, [FromForm] int duration, [FromForm] string? year)
     {
         var uploadsPath = Path.Combine(AppContext.BaseDirectory, _config["UploadsPath"] ?? "uploads");
@@ -39,6 +39,7 @@ public class SongsController : ControllerBase
         {
             Title = title,
             Artist = string.IsNullOrWhiteSpace(artist) ? null : artist,
+            AlbumArtist = string.IsNullOrWhiteSpace(albumArtist) ? null : albumArtist,
             Genre = string.IsNullOrWhiteSpace(genre) ? null : genre,
             Language = string.IsNullOrWhiteSpace(language) ? null : language,
             Duration = duration,
@@ -76,6 +77,11 @@ public class SongsController : ControllerBase
         var artists = await _db.Songs
             .Where(s => s.Artist != null)
             .Select(s => s.Artist!)
+            .Union(
+                _db.Songs
+                    .Where(s => s.AlbumArtist != null)
+                    .Select(s => s.AlbumArtist!)
+            )
             .Distinct()
             .OrderBy(a => a)
             .ToListAsync();
