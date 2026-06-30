@@ -12,6 +12,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
 
 builder.Services.AddScoped<PlaylistService>(); // registers service
+builder.Services.AddScoped<SongService>();
 
 builder.Services.AddCors(options =>
     options.AddDefaultPolicy(policy =>

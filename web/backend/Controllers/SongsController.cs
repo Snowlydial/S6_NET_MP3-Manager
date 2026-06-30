@@ -39,6 +39,17 @@ public class SongsController : ControllerBase
         return File(stream, "audio/mpeg", enableRangeProcessing: true);
     }
 
+    [HttpGet("{id}/download")]
+    public IActionResult Download(int id)
+    {
+        Song? song = _db.Songs.Find(id);
+        if (song == null) return NotFound();
+        if (!System.IO.File.Exists(song.FilePath)) return NotFound("File not found on disk");
+        
+        FileStream stream = System.IO.File.OpenRead(song.FilePath);
+        return File(stream, "audio/mpeg", Path.GetFileName(song.FilePath));
+    }
+
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {

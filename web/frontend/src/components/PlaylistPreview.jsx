@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import AudioPlayer from './AudioPlayer'
 import SongPicker from './SongPicker'
-import { downloadPlaylist } from '../api/api'
+import { downloadPlaylist, downloadSong } from '../api/api'
 import './PlaylistPreview.css'
 
 function formatDuration(seconds) {
@@ -35,6 +35,16 @@ export default function PlaylistPreview({ playlist, onPlaylistChange }) {
     } else {
       onPlaylistChange([...playlist, song])
     }
+  }
+
+  async function handleDownloadSong(id, songName) {
+    const blob = await downloadSong(id);
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${songName}.mp3`
+    a.click()
+    URL.revokeObjectURL(url)
   }
 
   async function handleDownload() {
@@ -103,6 +113,13 @@ export default function PlaylistPreview({ playlist, onPlaylistChange }) {
               onClick={e => { e.stopPropagation(); removeSong(song.id) }}
             >
               ×
+            </button>
+            <button
+              className="btn-download-song"
+              title='Download Song'
+              onClick={e => {e.stopPropagation(); handleDownloadSong(song.id, song.title) }}
+            >
+              ⬇
             </button>
           </li>
         ))}

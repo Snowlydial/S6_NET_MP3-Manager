@@ -20,6 +20,12 @@ export async function downloadPlaylist(songIds) {
   return res.blob()
 }
 
+export async function downloadSong(songId) {
+  const res = await fetch(`${BASE}/songs/${songId}/download`)
+  if (!res.ok) throw new Error(await res.text())
+  return res.blob()
+}
+
 export async function getSongs() {
   const res = await fetch(`${BASE}/songs`)
   if (!res.ok) throw new Error(await res.text())
