@@ -1,0 +1,56 @@
+.my-playlists-page {
+  display: flex;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.playlists-list {
+  min-width: 200px;
+}
+
+.playlists-list h2 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #222;
+}
+
+.playlists-list ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.playlists-list button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #555;
+  padding: 8px 10px;
+  border-radius: 4px;
+  width: 100%;
+  text-align: left;
+}
+
+.playlists-list button:hover {
+  background: #f0ebe4;
+  color: #222;
+}
+
+.playlists-list button.active {
+  background: #ede8e2;
+  color: #111;
+  font-weight: 600;
+}
+
+.playlist-detail {
+  flex: 1;
+}
+
+.empty-state {
+  color: #999;
+  font-size: 14px;
+  padding: 2rem;
+}
