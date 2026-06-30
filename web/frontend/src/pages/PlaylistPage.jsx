@@ -1,17 +1,19 @@
 import { useState } from 'react'
 import CriteriaForm from '../components/CriteriaForm'
 import PlaylistPreview from '../components/PlaylistPreview'
-import { generatePlaylist } from '../api/api'
+import { generatePlaylist, savePlaylist } from '../api/api'
 import './PlaylistPage.css'
 
 export default function PlaylistPage() {
   const [playlist, setPlaylist] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [saved, setSaved] = useState(false)
 
   async function handleGenerate(criteria) {
     setLoading(true)
     setError(null)
+    setSaved(false)
     try {
       const result = await generatePlaylist(criteria)
       setPlaylist(result)
@@ -19,6 +21,18 @@ export default function PlaylistPage() {
       setError(err.message)
     } finally {
       setLoading(false)
+    }
+  }
+
+  async function handleRegister() {
+    if (!playlist) return
+    const name = prompt('Name your playlist:', 'My Playlist')
+    if (!name) return
+    try {
+      await savePlaylist(name, playlist.map(s => s.id))
+      setSaved(true)
+    } catch (err) {
+      alert('Failed to save: ' + err.message)
     }
   }
 
@@ -38,7 +52,12 @@ export default function PlaylistPage() {
 
         {playlist !== null && (
           <section className="panel">
-            <PlaylistPreview playlist={playlist} onPlaylistChange={setPlaylist} />
+            <PlaylistPreview
+              playlist={playlist}
+              onPlaylistChange={setPlaylist}
+              onRegister={saved ? null : handleRegister}
+            />
+            {saved && <p style={{ color: 'green' }}>Playlist saved!</p>}
           </section>
         )}
       </div>

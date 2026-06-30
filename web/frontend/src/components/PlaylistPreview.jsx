@@ -4,6 +4,8 @@ import SongPicker from './SongPicker'
 import { downloadPlaylist, downloadSong } from '../api/api'
 import './PlaylistPreview.css'
 
+
+
 function formatDuration(seconds) {
   const m = Math.floor(seconds / 60)
   const s = (seconds % 60).toString().padStart(2, '0')
@@ -14,7 +16,7 @@ function totalDuration(songs) {
   return songs.reduce((acc, s) => acc + s.duration, 0)
 }
 
-export default function PlaylistPreview({ playlist, onPlaylistChange }) {
+export default function PlaylistPreview({ playlist, onPlaylistChange, onRegister }) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [downloading, setDownloading] = useState(false)
   const [picker, setPicker] = useState(null) // { mode: 'replace', index } | { mode: 'add' } | null
@@ -138,6 +140,12 @@ export default function PlaylistPreview({ playlist, onPlaylistChange }) {
       <button className="btn-download" onClick={handleDownload} disabled={downloading}>
         {downloading ? 'Preparing...' : 'Download as ZIP'}
       </button>
+
+      {onRegister && (
+        <button className="btn-register" onClick={onRegister}>
+          Save Playlist
+        </button>
+      )}
     </div>
   )
 }
