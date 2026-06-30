@@ -28,6 +28,23 @@ public class PlaylistsController : ControllerBase
         return Ok(playlist);
     }
 
+    [HttpPost("save")]
+    public async Task<IActionResult> Save([FromBody] SavePlaylistRequest request)
+    {
+        if (request.SongIds.Count == 0)
+            return BadRequest("No songs provided");
+
+        Playlist playlist = await _playlistService.SavePlaylist(request.Name, request.SongIds);
+        return Ok(playlist);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
+    {
+        List<Playlist> playlists = await _playlistService.GetAllPlaylists();
+        return Ok(playlists);
+    }
+
     [HttpPost("download")]
     public async Task<IActionResult> Download([FromBody] DownloadPlaylistRequest request)
     {

@@ -41,3 +41,19 @@ export async function getFilters() {
 export function streamUrl(songId) {
   return `${BASE}/songs/${songId}/stream`
 }
+
+export async function savePlaylist(name, songIds) {
+  const res = await fetch(`${BASE}/playlists/save`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, songIds }),
+  })
+  if (!res.ok) throw new Error(await res.text())
+  return res.json()
+}
+
+export async function getPlaylists() {
+  const res = await fetch(`${BASE}/playlists`)
+  if (!res.ok) throw new Error(await res.text())
+  return res.json()
+}
