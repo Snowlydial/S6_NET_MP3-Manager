@@ -77,6 +77,26 @@ public class PlaylistService
         return playlist;
     }
 
+    public async Task<Playlist> SavePlaylist(string name, List<int> songIds)
+    {
+        Playlist playlist = new Playlist { Name = name };
+        foreach (int songId in songIds)
+            playlist.Songs.Add(new PlaylistSong { SongId = songId });
+
+        _db.Playlists.Add(playlist);
+        await _db.SaveChangesAsync();
+        return playlist;
+    }
+
+    public async Task<List<Playlist>> GetAllPlaylists()
+    {
+        return await _db.Playlists
+            .Include(p => p.Songs)
+            .ThenInclude(ps => ps.Song)
+            .OrderByDescending(p => p.CreatedAt)
+            .ToListAsync();
+    }
+
     public async Task<MemoryStream> BuildZip(List<int> songIds)
     {
         List<Song> songs = _db.Songs
