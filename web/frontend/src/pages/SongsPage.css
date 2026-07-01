@@ -1,0 +1,162 @@
+.songs-page {
+  padding: 2rem;
+}
+
+.songs-page h2 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #222;
+}
+
+.songs-page h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 0.75rem;
+}
+
+.songs-error {
+  color: #c0392b;
+  font-size: 13px;
+  margin-bottom: 1rem;
+}
+
+.upload-section {
+  background: #fffef9;
+  border: 1px solid #e0dbd4;
+  border-radius: 6px;
+  padding: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.upload-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.upload-fields {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.upload-form input[type='file'] {
+  font-size: 13px;
+}
+
+.upload-fields input {
+  padding: 7px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 13px;
+  outline: none;
+}
+
+.upload-fields input:focus {
+  border-color: #8b7355;
+}
+
+.btn-upload {
+  align-self: flex-start;
+  background: #8b7355;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 18px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.btn-upload:hover {
+  background: #6e5b3f;
+}
+
+.songs-table-section {
+  overflow-x: auto;
+}
+
+.songs-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.songs-table th {
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 2px solid #e0dbd4;
+  color: #888;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.songs-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #f0ebe4;
+  color: #333;
+}
+
+.songs-table tbody tr:hover {
+  background: #fffef9;
+}
+
+.songs-table td input {
+  padding: 4px 8px;
+  border: 1px solid #8b7355;
+  border-radius: 3px;
+  font-size: 13px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.row-actions {
+  display: flex;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.btn-edit, .btn-delete, .btn-save, .btn-cancel {
+  border: none;
+  border-radius: 3px;
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.btn-edit {
+  background: #e8e2da;
+  color: #444;
+}
+
+.btn-edit:hover {
+  background: #d4cfc9;
+}
+
+.btn-delete {
+  background: #fdecea;
+  color: #c0392b;
+}
+
+.btn-delete:hover {
+  background: #f5c6c2;
+}
+
+.btn-save {
+  background: #8b7355;
+  color: #fff;
+}
+
+.btn-save:hover {
+  background: #6e5b3f;
+}
+
+.btn-cancel {
+  background: #e8e2da;
+  color: #444;
+}
+
+.btn-cancel:hover {
+  background: #d4cfc9;
+}

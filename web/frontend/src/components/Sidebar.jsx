@@ -16,6 +16,7 @@ export default function Sidebar() {
       <div className="sidebar-links">
         <NavLink to="/" className={({ isActive }) => isActive ? 'active' : ''}>Generate</NavLink>
         <NavLink to="/my-playlists" className={({ isActive }) => isActive ? 'active' : ''}>My Playlists</NavLink>
+        <NavLink to="/songs" className={({ isActive }) => isActive ? 'active' : ''}>Songs</NavLink>
       </div>
       <div className="sidebar-footer">
         <span className="sidebar-user">{username}</span>

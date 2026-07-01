@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Sidebar from './components/Sidebar'
 import PlaylistPage from './pages/PlaylistPage'
 import MyPlaylistsPage from './pages/MyPlaylistsPage'
+import SongsPage from './pages/SongsPage'
 import LoginPage from './pages/LoginPage'
 import './App.css'
 
@@ -25,6 +26,7 @@ function App() {
                   <Routes>
                     <Route path="/" element={<PlaylistPage />} />
                     <Route path="/my-playlists" element={<MyPlaylistsPage />} />
+                    <Route path="/songs" element={<SongsPage />} />
                   </Routes>
                 </div>
               </div>

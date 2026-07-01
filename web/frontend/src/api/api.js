@@ -90,6 +90,30 @@ export async function getPlaylists() {
   return res.json()
 }
 
+export async function uploadSong(formData) {
+  const res = await fetch(`${BASE}/songs/upload`, {
+    method: 'POST',
+    body: formData,
+  })
+  if (!res.ok) throw new Error(await res.text())
+  return res.json()
+}
+
+export async function updateSong(id, data) {
+  const res = await fetch(`${BASE}/songs/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  })
+  if (!res.ok) throw new Error(await res.text())
+  return res.json()
+}
+
+export async function deleteSong(id) {
+  const res = await fetch(`${BASE}/songs/${id}`, { method: 'DELETE' })
+  if (!res.ok) throw new Error(await res.text())
+}
+
 export async function fusePlaylists(name, playlistIds) {
   const res = await fetch(`${BASE}/playlists/fuse`, {
     method: 'POST',

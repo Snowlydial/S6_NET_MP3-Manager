@@ -82,6 +82,23 @@ public class SongsController : ControllerBase
         return Ok(new { artists, genres });
     }
 
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(int id, [FromBody] UpdateSongRequest request)
+    {
+        Song? song = await _db.Songs.FindAsync(id);
+        if (song == null) return NotFound();
+
+        song.Title = request.Title;
+        song.Artist = string.IsNullOrWhiteSpace(request.Artist) ? null : request.Artist;
+        song.AlbumArtist = string.IsNullOrWhiteSpace(request.AlbumArtist) ? null : request.AlbumArtist;
+        song.Genre = string.IsNullOrWhiteSpace(request.Genre) ? null : request.Genre;
+        song.Language = string.IsNullOrWhiteSpace(request.Language) ? null : request.Language;
+        song.Year = string.IsNullOrWhiteSpace(request.Year) ? null : request.Year;
+
+        await _db.SaveChangesAsync();
+        return Ok(song);
+    }
+
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
