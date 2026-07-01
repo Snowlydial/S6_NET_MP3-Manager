@@ -4,10 +4,11 @@ import time
 import requests
 from dotenv import load_dotenv
 from shared.logger import initLogger, logStep
-from shared.message_queue import consume
+from shared.message_queue import consume, publish
 
 load_dotenv()
-queueIn = os.getenv("QUEUE_P2_TO_P3")
+queueIn  = os.getenv("QUEUE_P2_TO_P3")
+queueOut = os.getenv("QUEUE_P3_TO_P4")
 apiBaseUrl = os.getenv("API_BASE_URL")
 MAX_ATTEMPTS = 5
 RETRY_DELAY = 10  # seconds between retries
@@ -76,31 +77,8 @@ def uploadSong(song: dict) -> bool:
             logger.info(f"Retrying in {RETRY_DELAY}s...")
             time.sleep(RETRY_DELAY)
 
-    logger.error(f"All {MAX_ATTEMPTS} attempts failed, skipping: {filename}")
+    logger.error(f"All {MAX_ATTEMPTS} attempts failed, keeping local file: {filename}")
     return False
-
-
-def deleteLocalFile(song: dict):
-    filePath = song["file_path"]
-    filename = os.path.basename(filePath)
-    try:
-        os.remove(filePath)
-        logger.info(f"Deleted local file: {filename}")
-    except OSError as e:
-        logger.error(f"Could not delete '{filename}': {e}")
-
-
-def processSong(song: dict):
-    if isBlacklisted(song, BLACKLIST):
-        logger.warning(f"Blacklisted, skipping upload: {song['title']}")
-        deleteLocalFile(song)
-        return
-
-    success = uploadSong(song)
-    if success:
-        deleteLocalFile(song)
-    else:
-        logger.warning(f"Keeping local file due to failed upload: {os.path.basename(song['file_path'])}")
 
 
 def processMessage(message: str):
@@ -114,8 +92,22 @@ def processMessage(message: str):
         return
 
     logger.info(f"Processing {len(songList)} file(s)")
+    uploadedPaths = []
+
     for song in songList:
-        processSong(song)
+        if isBlacklisted(song, BLACKLIST):
+            logger.warning(f"Blacklisted, skipping: {song['title']}")
+            continue
+
+        success = uploadSong(song)
+        if success:
+            uploadedPaths.append(song["file_path"])
+
+    if uploadedPaths:
+        publish(queueOut, json.dumps(uploadedPaths))
+        logger.info(f"{len(uploadedPaths)} uploaded file(s) sent to P4 for deletion")
+    else:
+        logger.info("No successful uploads, nothing sent to P4")
 
 
 if __name__ == "__main__":
