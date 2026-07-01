@@ -28,6 +28,16 @@ public class PlaylistsController : ControllerBase
         return Ok(playlist);
     }
 
+    [HttpPost("fuse")]
+    public async Task<IActionResult> Fuse([FromBody] FusePlaylistRequest request)
+    {
+        if (request.PlaylistIds.Count < 2)
+            return BadRequest("Select at least 2 playlists to fuse");
+
+        Playlist fused = await _playlistService.FusePlaylists(request.Name, request.PlaylistIds);
+        return Ok(fused);
+    }
+
     [HttpPost("save")]
     public async Task<IActionResult> Save([FromBody] SavePlaylistRequest request)
     {

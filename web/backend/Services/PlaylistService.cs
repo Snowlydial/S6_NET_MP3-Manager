@@ -97,6 +97,32 @@ public class PlaylistService
             .ToListAsync();
     }
 
+    public async Task<Playlist> FusePlaylists(string name, List<int> playlistIds)
+    {
+        List<Playlist> playlists = await _db.Playlists
+            .Where(p => playlistIds.Contains(p.Id))
+            .Include(p => p.Songs)
+            .ToListAsync();
+
+        // Merge all song IDs, remove duplicates
+        HashSet<int> seenIds = new HashSet<int>();
+        List<PlaylistSong> mergedSongs = new List<PlaylistSong>();
+
+        foreach (Playlist playlist in playlists)
+        {
+            foreach (PlaylistSong ps in playlist.Songs)
+            {
+                if (seenIds.Add(ps.SongId))
+                    mergedSongs.Add(new PlaylistSong { SongId = ps.SongId });
+            }
+        }
+
+        Playlist fused = new Playlist { Name = name, Songs = mergedSongs };
+        _db.Playlists.Add(fused);
+        await _db.SaveChangesAsync();
+        return fused;
+    }
+
     public async Task<MemoryStream> BuildZip(List<int> songIds)
     {
         List<Song> songs = _db.Songs

@@ -34,8 +34,10 @@ def isBlacklisted(song: dict, blacklist: dict) -> bool:
                 return True
     return False
 
-BLACKLIST = loadBlacklist()
-logger.info(f"Blacklist loaded: {BLACKLIST}")
+def loadDurationLimit() -> int:
+    path = os.path.join(BASE_DIR, "duration_limit.json")
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f).get("max_seconds", 0)
 
 
 def uploadSong(song: dict) -> bool:
@@ -91,12 +93,23 @@ def processMessage(message: str):
         logger.error(f"Failed to deserialize P2 message: {e}")
         return
 
+    blacklist = loadBlacklist()
+    logger.info(f"Blacklist loaded: {blacklist}")
+
+    durationLimit = loadDurationLimit()
+    logger.info(f"Duration limit: {durationLimit}s (0 = no limit)")
+
     logger.info(f"Processing {len(songList)} file(s)")
     uploadedPaths = []
 
     for song in songList:
-        if isBlacklisted(song, BLACKLIST):
+        if isBlacklisted(song, blacklist):
             logger.warning(f"Blacklisted, skipping: {song['title']}")
+            continue
+
+        duration = song.get("duration") or 0
+        if durationLimit > 0 and duration > durationLimit:
+            logger.warning(f"Exceeds duration limit ({duration}s > {durationLimit}s), skipping: {song['title']}")
             continue
 
         success = uploadSong(song)

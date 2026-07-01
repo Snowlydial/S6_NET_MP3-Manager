@@ -45,6 +45,33 @@
   font-weight: 600;
 }
 
+.playlist-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.playlist-item input[type='checkbox'] {
+  cursor: pointer;
+  accent-color: #8b7355;
+}
+
+.btn-fuse {
+  margin-bottom: 12px;
+  background: #8b7355;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 14px;
+  font-size: 13px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.btn-fuse:hover {
+  background: #6e5b3f;
+}
+
 .playlist-detail {
   flex: 1;
 }

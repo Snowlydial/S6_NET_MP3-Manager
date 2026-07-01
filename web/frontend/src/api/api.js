@@ -57,3 +57,13 @@ export async function getPlaylists() {
   if (!res.ok) throw new Error(await res.text())
   return res.json()
 }
+
+export async function fusePlaylists(name, playlistIds) {
+  const res = await fetch(`${BASE}/playlists/fuse`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, playlistIds }),
+  })
+  if (!res.ok) throw new Error(await res.text())
+  return res.json()
+}
