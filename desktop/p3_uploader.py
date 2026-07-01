@@ -13,6 +13,29 @@ MAX_ATTEMPTS = 5
 RETRY_DELAY = 10  # seconds between retries
 logger = initLogger("P3_uploader")
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+def loadBlacklist() -> dict:
+    path = os.path.join(BASE_DIR, "blacklist.json")
+    if not os.path.exists(path):
+        logger.warning("blacklist.json not found, no blacklisting applied")
+        return {}
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def isBlacklisted(song: dict, blacklist: dict) -> bool:
+    for field, bannedValues in blacklist.items():
+        songValue = song.get(field)
+        if songValue is None:
+            continue
+        for banned in bannedValues:
+            if songValue.lower() == banned.lower():
+                return True
+    return False
+
+BLACKLIST = loadBlacklist()
+logger.info(f"Blacklist loaded: {BLACKLIST}")
+
 
 def uploadSong(song: dict) -> bool:
     filePath = song["file_path"]
@@ -68,6 +91,11 @@ def deleteLocalFile(song: dict):
 
 
 def processSong(song: dict):
+    if isBlacklisted(song, BLACKLIST):
+        logger.warning(f"Blacklisted, skipping upload: {song['title']}")
+        deleteLocalFile(song)
+        return
+
     success = uploadSong(song)
     if success:
         deleteLocalFile(song)
