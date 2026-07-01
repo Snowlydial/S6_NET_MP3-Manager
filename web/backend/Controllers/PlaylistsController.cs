@@ -18,6 +18,17 @@ public class PlaylistsController : ControllerBase
         _db = db;
     }
 
+    private IActionResult? GetUserId(out int userId)
+    {
+        string? header = Request.Headers["X-User-Id"];
+        if (string.IsNullOrEmpty(header) || !int.TryParse(header, out userId))
+        {
+            userId = 0;
+            return Unauthorized("Missing or invalid X-User-Id header");
+        }
+        return null;
+    }
+
     [HttpPost("generate")]
     public async Task<IActionResult> Generate([FromBody] GeneratePlaylistRequest request)
     {
@@ -31,27 +42,36 @@ public class PlaylistsController : ControllerBase
     [HttpPost("fuse")]
     public async Task<IActionResult> Fuse([FromBody] FusePlaylistRequest request)
     {
+        IActionResult? error = GetUserId(out int userId);
+        if (error != null) return error;
+
         if (request.PlaylistIds.Count < 2)
             return BadRequest("Select at least 2 playlists to fuse");
 
-        Playlist fused = await _playlistService.FusePlaylists(request.Name, request.PlaylistIds);
+        Playlist fused = await _playlistService.FusePlaylists(request.Name, request.PlaylistIds, userId);
         return Ok(fused);
     }
 
     [HttpPost("save")]
     public async Task<IActionResult> Save([FromBody] SavePlaylistRequest request)
     {
+        IActionResult? error = GetUserId(out int userId);
+        if (error != null) return error;
+
         if (request.SongIds.Count == 0)
             return BadRequest("No songs provided");
 
-        Playlist playlist = await _playlistService.SavePlaylist(request.Name, request.SongIds);
+        Playlist playlist = await _playlistService.SavePlaylist(request.Name, request.SongIds, userId);
         return Ok(playlist);
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        List<Playlist> playlists = await _playlistService.GetAllPlaylists();
+        IActionResult? error = GetUserId(out int userId);
+        if (error != null) return error;
+
+        List<Playlist> playlists = await _playlistService.GetAllPlaylists(userId);
         return Ok(playlists);
     }
 

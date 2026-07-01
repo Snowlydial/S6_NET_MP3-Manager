@@ -13,6 +13,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<PlaylistService>(); // registers service
 builder.Services.AddScoped<SongService>();
+builder.Services.AddScoped<AuthService>();
 
 builder.Services.AddCors(options =>
     options.AddDefaultPolicy(policy =>

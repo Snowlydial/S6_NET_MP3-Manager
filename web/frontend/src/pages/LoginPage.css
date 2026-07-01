@@ -1,0 +1,87 @@
+.login-page {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f0eb;
+}
+
+.login-box {
+  background: #fff;
+  border-radius: 8px;
+  padding: 2.5rem;
+  width: 340px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+.login-box h1 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.login-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 1.5rem;
+}
+
+.login-tabs button {
+  flex: 1;
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #666;
+}
+
+.login-tabs button.active {
+  background: #8b7355;
+  border-color: #8b7355;
+  color: #fff;
+  font-weight: 600;
+}
+
+.login-box form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.login-box input {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  outline: none;
+}
+
+.login-box input:focus {
+  border-color: #8b7355;
+}
+
+.login-error {
+  color: #c0392b;
+  font-size: 13px;
+  margin: 0;
+}
+
+.btn-submit {
+  background: #8b7355;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+.btn-submit:hover {
+  background: #6e5b3f;
+}

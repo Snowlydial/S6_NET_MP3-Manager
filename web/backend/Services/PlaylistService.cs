@@ -77,9 +77,9 @@ public class PlaylistService
         return playlist;
     }
 
-    public async Task<Playlist> SavePlaylist(string name, List<int> songIds)
+    public async Task<Playlist> SavePlaylist(string name, List<int> songIds, int userId)
     {
-        Playlist playlist = new Playlist { Name = name };
+        Playlist playlist = new Playlist { Name = name, UserId = userId };
         foreach (int songId in songIds)
             playlist.Songs.Add(new PlaylistSong { SongId = songId });
 
@@ -88,19 +88,20 @@ public class PlaylistService
         return playlist;
     }
 
-    public async Task<List<Playlist>> GetAllPlaylists()
+    public async Task<List<Playlist>> GetAllPlaylists(int userId)
     {
         return await _db.Playlists
+            .Where(p => p.UserId == userId)
             .Include(p => p.Songs)
             .ThenInclude(ps => ps.Song)
             .OrderByDescending(p => p.CreatedAt)
             .ToListAsync();
     }
 
-    public async Task<Playlist> FusePlaylists(string name, List<int> playlistIds)
+    public async Task<Playlist> FusePlaylists(string name, List<int> playlistIds, int userId)
     {
         List<Playlist> playlists = await _db.Playlists
-            .Where(p => playlistIds.Contains(p.Id))
+            .Where(p => playlistIds.Contains(p.Id) && p.UserId == userId)
             .Include(p => p.Songs)
             .ToListAsync();
 
@@ -117,7 +118,7 @@ public class PlaylistService
             }
         }
 
-        Playlist fused = new Playlist { Name = name, Songs = mergedSongs };
+        Playlist fused = new Playlist { Name = name, Songs = mergedSongs, UserId = userId };
         _db.Playlists.Add(fused);
         await _db.SaveChangesAsync();
         return fused;
